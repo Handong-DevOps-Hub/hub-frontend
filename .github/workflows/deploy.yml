@@ -1,0 +1,19 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and Run Docker Container
+        run: |
+          docker build -t hub-frontend-image .
+          docker stop hub-frontend-app || true
+          docker rm hub-frontend-app || true
+          docker run -d -p 8080:80 --name hub-frontend-app --network devops-network hub-frontend-image
